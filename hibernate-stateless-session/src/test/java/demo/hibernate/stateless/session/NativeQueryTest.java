@@ -35,7 +35,7 @@ public class NativeQueryTest {
         session.getTransaction().begin();
         session.createNativeMutationQuery("""
 				CREATE TABLE persons (
-                        id int,
+                        id int not null,
                         first_name varchar(255),
                         last_name varchar(255)
 				);""").executeUpdate();
