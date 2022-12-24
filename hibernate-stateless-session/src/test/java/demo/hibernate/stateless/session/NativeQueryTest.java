@@ -51,9 +51,7 @@ public class NativeQueryTest {
     }
     
 	@Test
-	public void testCreateNativeQuery() {
-	    // Do NOT use Object[].class as found in the 6.1 documentation examples, 
-	    // see case https://hibernate.atlassian.net/browse/HHH-15914
+	public void testCreateNativeQueryUsingTuple() {
 		List<Tuple> persons = session.createNativeQuery("SELECT id, first_name, last_name FROM persons ORDER BY id", Tuple.class).list();
 		// Expect 2 rows
 		assertEquals(2, persons.size());
@@ -63,6 +61,22 @@ public class NativeQueryTest {
 		assertEquals("Tom", firstResult.get(1));
 		assertEquals("Erichsen", firstResult.get(2));
 	}
+
+	// Since Hibernate 6.2.0CR1 release issue: https://hibernate.atlassian.net/browse/HHH-15914 is fixed
+	// Both Tuple.class and Object[].class are working
+    @Test
+    public void testCreateNativeQueryUsingObejctArray() {
+        // Do NOT use Object[].class as found in the 6.1 documentation examples, 
+        // see case https://hibernate.atlassian.net/browse/HHH-15914
+        List<Object[]> persons = session.createNativeQuery("SELECT id, first_name, last_name FROM persons ORDER BY id", Object[].class).list();
+        // Expect 2 rows
+        assertEquals(2, persons.size());
+        // Validate the first row
+        Object[] firstResult = persons.get(0);
+        assertEquals(5, firstResult[0]);
+        assertEquals("Tom", firstResult[1]);
+        assertEquals("Erichsen", firstResult[2]);
+    }
 	
     @Test
     public void testCreateNativeQueryTransformToDTO() {
