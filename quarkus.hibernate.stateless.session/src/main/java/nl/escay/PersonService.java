@@ -11,6 +11,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional.TxType;
 import nl.escay.entity.Person;
 import nl.escay.entity.PersonDTO;
 import nl.escay.entity.PersonRecord;
@@ -28,15 +29,17 @@ public class PersonService {
         person.setFirstName(firstName);
         person.setLastName(lastName);
         em.persist(person);
+        
+        // No need to call flush(), when the transaction is finished data is committed to the database.
     }
     
     @Transactional
     public void createPersonUsingSql(Long id, String firstName, String lastName) {
         em.createNativeQuery("INSERT INTO Person (id, firstName, lastName) VALUES (:id, :firstName, :lastName)")
-        .setParameter("id", id)
-        .setParameter("firstName", firstName)
-        .setParameter("lastName", lastName)
-        .executeUpdate();
+            .setParameter("id", id)
+            .setParameter("firstName", firstName)
+            .setParameter("lastName", lastName)
+            .executeUpdate();
         
         // No need to call flush(), when the transaction is finished data is committed to the database.
         //
@@ -45,6 +48,7 @@ public class PersonService {
         // using Jakarta persistence.
     }
     
+    @Transactional(value = TxType.NEVER)
     public List<PersonDTO> getPersonsAsDtoUsingTuple() {
         @SuppressWarnings("unchecked")
         List<Tuple> resultTuples = em.createNativeQuery("select id, firstName, lastName from Person", Tuple.class).getResultList();
