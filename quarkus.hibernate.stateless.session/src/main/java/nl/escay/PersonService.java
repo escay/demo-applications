@@ -30,6 +30,21 @@ public class PersonService {
         em.persist(person);
     }
     
+    @Transactional
+    public void createPersonUsingSql(Long id, String firstName, String lastName) {
+        em.createNativeQuery("INSERT INTO Person (id, firstName, lastName) VALUES (:id, :firstName, :lastName)")
+        .setParameter("id", id)
+        .setParameter("firstName", firstName)
+        .setParameter("lastName", lastName)
+        .executeUpdate();
+        
+        // No need to call flush(), when the transaction is finished data is committed to the database.
+        //
+        // Although this example works, I would not mix Entity objects with manually created objects. 
+        // This example mainly shows inserting objects using only sql and no Entity classes is possible
+        // using Jakarta persistence.
+    }
+    
     public List<PersonDTO> getPersonsAsDtoUsingTuple() {
         @SuppressWarnings("unchecked")
         List<Tuple> resultTuples = em.createNativeQuery("select id, firstName, lastName from Person", Tuple.class).getResultList();

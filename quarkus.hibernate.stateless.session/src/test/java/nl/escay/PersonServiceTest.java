@@ -22,13 +22,16 @@ public class PersonServiceTest {
         // Insert a record using the entity manager
         service.createPerson(5L, "Tom", "Erichsen");
         service.createPerson(8L, "Ben", "Johanssen");
+        
+        service.createPersonUsingSql(11L, "Jerry", "Nicolas");
+        service.createPersonUsingSql(12L, "James", "Master");
 
         // Query the database content using a native query and no transaction
         List<PersonDTO> personsAsDtoUsingTuple = service.getPersonsAsDtoUsingTuple();
-        assertEquals(2, personsAsDtoUsingTuple.size());
+        assertEquals(4, personsAsDtoUsingTuple.size());
 
         // Query the database content using a native query and no transaction
         List<PersonRecord> personsAsRecordUsingTuple = service.getPersonsAsRecordUsingTuple();
-        assertEquals(2, personsAsRecordUsingTuple.size());
+        assertEquals(4, personsAsRecordUsingTuple.size());
     }
 }
