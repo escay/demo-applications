@@ -26,12 +26,19 @@ public class PersonServiceTest {
         service.createPersonUsingSql(11L, "Jerry", "Nicolas");
         service.createPersonUsingSql(12L, "James", "Master");
 
+        service.createPersonUsingSqlAndStatelessSesssion(13L, "Harmony ", "Hill");
+        service.createPersonUsingSqlAndStatelessSesssion(14L, "Aleeza ", "Prince");
+        
         // Query the database content using a native query and no transaction
         List<PersonDTO> personsAsDtoUsingTuple = service.getPersonsAsDtoUsingTuple();
-        assertEquals(4, personsAsDtoUsingTuple.size());
+        assertEquals(6, personsAsDtoUsingTuple.size());
 
         // Query the database content using a native query and no transaction
         List<PersonRecord> personsAsRecordUsingTuple = service.getPersonsAsRecordUsingTuple();
-        assertEquals(4, personsAsRecordUsingTuple.size());
+        assertEquals(6, personsAsRecordUsingTuple.size());
+
+        // Query the database content using a StatelessSession and a native query and no transaction
+        List<PersonRecord> personsAsRecordUsingTupleAndStatelessSession = service.getPersonsAsRecordUsingTupleAndStatelessSession();
+        assertEquals(6, personsAsRecordUsingTupleAndStatelessSession.size());
     }
 }
