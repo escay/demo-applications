@@ -20,7 +20,7 @@ import nl.escay.entity.PersonDTO;
 import nl.escay.entity.PersonRecord;
 
 @ApplicationScoped
-public class PersonService {
+public class EntityManagerService {
     
     @Inject
     EntityManager em; 
@@ -49,26 +49,6 @@ public class PersonService {
         // Although this example works, I would not mix Entity objects with manually created objects. 
         // This example mainly shows inserting objects using only sql and no Entity classes is possible
         // using Jakarta persistence.
-    }
-    
-    @Transactional
-    public void createPersonUsingSqlAndStatelessSesssion(Long id, String firstName, String lastName) {
-        // If you know Hibernate is the implementation and you do not care about using 
-        // Hibernate specific code you can use the Hibernate StatelessSession interface.
-        Session hibernateSession = em.unwrap(Session.class);
-        SessionFactory sessionFactory = hibernateSession.getSessionFactory();
-        
-        try (StatelessSession openStatelessSession = sessionFactory.openStatelessSession()) {
-            openStatelessSession.createNativeQuery("INSERT INTO Person (id, firstName, lastName) VALUES (:id, :firstName, :lastName)")
-                .setParameter("id", id)
-                .setParameter("firstName", firstName)
-                .setParameter("lastName", lastName)
-                .executeUpdate();
-        }
-
-        // No need to use
-        // session.getTransaction().begin();
-        // session.getTransaction().commit();
     }
     
     @Transactional(value = TxType.NEVER)
@@ -101,31 +81,6 @@ public class PersonService {
                         (String) tuple.get(1), 
                         (String) tuple.get(2)))
                 .collect(Collectors.toList());
-        
-        System.out.println(Arrays.toString(personRecords.toArray()));
-        return personRecords;
-    }
-    
-    public List<PersonRecord> getPersonsAsRecordUsingTupleAndStatelessSession() {
-        List<PersonRecord> personRecords = null;
-
-        // If you know Hibernate is the implementation and you do not care about using 
-        // Hibernate specific code you can use the Hibernate StatelessSession interface.
-        Session hibernateSession = em.unwrap(Session.class);
-        SessionFactory sessionFactory = hibernateSession.getSessionFactory();
-        
-        try (StatelessSession openStatelessSession = sessionFactory.openStatelessSession()) {
-            List<Tuple> resultTuples = openStatelessSession
-                    .createNativeQuery("select id, firstName, lastName from Person", Tuple.class).getResultList();
-            
-            // Convert to Record using stream api, quite similar to Hibernate 6 .setTupleTransformer
-            personRecords = resultTuples.stream()
-                    .map(tuple -> new PersonRecord(
-                            (Integer) tuple.get(0), 
-                            (String) tuple.get(1), 
-                            (String) tuple.get(2)))
-                    .collect(Collectors.toList());
-        }
         
         System.out.println(Arrays.toString(personRecords.toArray()));
         return personRecords;

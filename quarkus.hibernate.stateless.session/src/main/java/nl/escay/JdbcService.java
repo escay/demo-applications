@@ -15,7 +15,7 @@ import jakarta.transaction.Transactional;
 import nl.escay.entity.PersonRecord;
 
 @ApplicationScoped
-public class DirectDatabaseService {
+public class JdbcService {
 
     @Inject
     AgroalDataSource defaultDataSource;
