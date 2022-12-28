@@ -22,6 +22,9 @@ public class PersistenceServiceTest {
 
     @Inject
     JdbcService jdbcService;
+    
+    @Inject
+    JooqService jooqService;
 
     @Test
     public void testDifferentPersistenceApproaches() throws Exception {
@@ -58,5 +61,9 @@ public class PersistenceServiceTest {
         // Query the database content using a Jdbc Sql only
         List<PersonRecord> personsAsRecordUsingJdbcSql = jdbcService.getPersonsAsRecordUsingJdbcSql();
         assertEquals(8, personsAsRecordUsingJdbcSql.size());
+
+        // Query the database content using jOOQ library
+        List<PersonRecord> personsAsRecordUsingJooq = jooqService.getPersonsAsRecord();
+        assertEquals(8, personsAsRecordUsingJooq.size());
     }
 }
