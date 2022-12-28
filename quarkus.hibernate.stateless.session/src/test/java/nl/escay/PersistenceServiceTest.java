@@ -44,26 +44,32 @@ public class PersistenceServiceTest {
         jdbcService.createPersonUsingJdbcSql(15L, "Hayley", "Hahn");
         jdbcService.createPersonUsingJdbcSql(16L, "Fabian", "Dean");
 
+        // Insert some records using jOOQ
+        jooqService.createPerson(17L, "Adam", "Morrow");
+        jooqService.createPerson(18L, "Megan", "Stein");
+        
+        int expectedNrOfPersons = 10;
+        
         // Query the database content using a native query and no transaction
         List<PersonDTO> personsAsDtoUsingTuple = entityManagerService.getPersonsAsDtoUsingTuple();
-        assertEquals(8, personsAsDtoUsingTuple.size());
+        assertEquals(expectedNrOfPersons, personsAsDtoUsingTuple.size());
 
         // Query the database content using a native query and no transaction
         List<PersonRecord> personsAsRecordUsingTuple = entityManagerService.getPersonsAsRecordUsingTuple();
-        assertEquals(8, personsAsRecordUsingTuple.size());
+        assertEquals(expectedNrOfPersons, personsAsRecordUsingTuple.size());
 
         // Query the database content using a StatelessSession and a native query and no
         // transaction
         List<PersonRecord> personsAsRecordUsingTupleAndStatelessSession = statelessSessionService
                 .getPersonsAsRecordUsingTupleAndStatelessSession();
-        assertEquals(8, personsAsRecordUsingTupleAndStatelessSession.size());
+        assertEquals(expectedNrOfPersons, personsAsRecordUsingTupleAndStatelessSession.size());
 
         // Query the database content using a Jdbc Sql only
         List<PersonRecord> personsAsRecordUsingJdbcSql = jdbcService.getPersonsAsRecordUsingJdbcSql();
-        assertEquals(8, personsAsRecordUsingJdbcSql.size());
+        assertEquals(expectedNrOfPersons, personsAsRecordUsingJdbcSql.size());
 
         // Query the database content using jOOQ library
         List<PersonRecord> personsAsRecordUsingJooq = jooqService.getPersonsAsRecord();
-        assertEquals(8, personsAsRecordUsingJooq.size());
+        assertEquals(expectedNrOfPersons, personsAsRecordUsingJooq.size());
     }
 }
